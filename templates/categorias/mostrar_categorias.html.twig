@@ -1,0 +1,22 @@
+{# templates/categorias/mostrar_categorias.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Categorías - Proyecto Wembli{% endblock %}
+
+{% block contenido %}
+    <h2>Categorías disponibles</h2>
+
+    {% if categorias is empty %}
+        <p>No hay categorías disponibles 😅</p>
+    {% else %}
+        <ul>
+        {% for categoria in categorias %}
+            <li>
+                <a href="{{ path('productos', {'categoria': categoria.getId()}) }}">
+                    {{ categoria.getNombre }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

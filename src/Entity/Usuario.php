@@ -31,8 +31,8 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $phone = null;
 
-    // Getters y setters...
-    
+    // -------------------- Getters y Setters --------------------
+
     public function getId(): ?int
     {
         return $this->id;
@@ -50,25 +50,23 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     public function getRoles(): array
-	{
-    		$roles = $this->roles;
+    {
+        $roles = $this->roles;
 
-    		// Si no es un array, intenta decodificar JSON
-    		if (!is_array($roles)) {
-        		if (is_string($roles)) {
-            		$roles = json_decode($roles, true) ?: [];
-        	} else {
-            		$roles = []; // cualquier otro caso
-        	}
-    	}
+        // Si no es un array, intenta decodificar JSON
+        if (!is_array($roles)) {
+            if (is_string($roles)) {
+                $roles = json_decode($roles, true) ?: [];
+            } else {
+                $roles = []; // cualquier otro caso
+            }
+        }
 
-    // Garantiza que siempre haya al menos ROLE_USER
-    $roles[] = 'ROLE_USER';
+        // Garantiza que siempre haya al menos ROLE_USER
+        $roles[] = 'ROLE_USER';
 
-    return array_unique($roles);
-}
-
-
+        return array_unique($roles);
+    }
 
     public function setRoles(array $roles): self
     {
@@ -119,4 +117,3 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         // limpia datos sensibles temporales si es necesario
     }
 }
-
