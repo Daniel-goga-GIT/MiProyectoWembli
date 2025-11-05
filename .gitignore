@@ -1,3 +1,4 @@
+*.deb
 
 ###> symfony/framework-bundle ###
 /.env.local
