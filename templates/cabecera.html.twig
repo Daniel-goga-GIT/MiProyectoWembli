@@ -1,7 +1,8 @@
+{# templates/cabecera.html.twig #}
 <h1>Mi Proyecto Wembli 😎</h1>
 <nav>
-    <a href="/">Inicio</a>
-    <a href="/categorias">Categorías</a>
-    <a href="/productos">Productos</a>
+    <a href="{{ path('app_home') }}">Inicio</a>
+    <a href="{{ path('categorias') }}">Categorías</a>
+    <a href="{{ path('productos', {categoria: 1}) }}">Productos</a>
 </nav>
 <hr>

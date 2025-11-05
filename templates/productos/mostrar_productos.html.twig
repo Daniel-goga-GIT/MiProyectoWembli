@@ -1,7 +1,33 @@
-<h1>Mi Proyecto Wembli 😎</h1>
-<nav>
-    <a href="/">Inicio</a>
-    <a href="/categorias">Categorías</a>
-    <a href="/productos">Productos</a>
-</nav>
-<hr>
+{# templates/productos/mostrar_productos.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Lista de productos{% endblock %}
+
+{% block contenido %}
+    <h2>Lista de productos</h2>
+
+    {% if productos is not empty %}
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.id }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.precio|number_format(2, ',', '.') }} €</td>
+                        <td>{{ producto.categoria.nombre ?? 'Sin categoría' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay productos disponibles.</p>
+    {% endif %}
+{% endblock %}

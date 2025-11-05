@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Categoria;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[IsGranted('ROLE_USER')]
 
 final class BaseControllers extends AbstractController
 {

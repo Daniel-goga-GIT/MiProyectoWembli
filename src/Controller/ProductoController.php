@@ -10,11 +10,14 @@ use App\Entity\Producto;
 
 final class ProductoController extends AbstractController
 {
-    #[Route('/productos/{categoria}', name: 'productos')]
-    public function mostrar_productos(ManagerRegistry $doctrine, int $categoria): Response
+    #[Route('/productos/{categoria?}', name: 'productos')]
+    public function mostrar_productos(ManagerRegistry $doctrine, ?int $categoria = null): Response
     {
-        $productos = $doctrine->getRepository(Producto::class)
-                        ->findBy(['categoria' => $categoria]);
+        $repo = $doctrine->getRepository(Producto::class);
+
+        $productos = $categoria
+            ? $repo->findBy(['categoria' => $categoria])
+            : $repo->findAll();
 
         return $this->render('productos/mostrar_productos.html.twig', [
             'productos' => $productos,
