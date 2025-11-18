@@ -3,6 +3,17 @@
 <nav>
     <a href="{{ path('app_home') }}">Inicio</a>
     <a href="{{ path('categorias') }}">Categorías</a>
-    <a href="{{ path('productos', {categoria: 1}) }}">Productos</a>
+    <a href="{{ path('cesta') }}">Cesta</a>
+
+    {% if app.user %}
+        <span style="margin-left: 2em;">
+            Conectado como <strong>{{ app.user.userIdentifier }}</strong> |
+            <a href="{{ path('logout') }}">Cerrar sesión</a>
+        </span>
+    {% else %}
+        <span style="margin-left: 2em;">
+            <a href="{{ path('login') }}">Iniciar sesión</a>
+        </span>
+    {% endif %}
 </nav>
 <hr>

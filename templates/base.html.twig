@@ -3,15 +3,118 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Aplicación Wembli{% endblock %}</title>
+    <title>{% block title %}Proyecto Wembli{% endblock %}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fafafa; }
-        header, footer { background: #f0f0f0; padding: 1em; }
-        nav a { margin-right: 1em; text-decoration: none; color: #333; font-weight: bold; }
-        nav a:hover { color: #007BFF; }
-        main { padding: 1em; }
-        hr { margin-top: 0.5em; margin-bottom: 0.5em; }
-        footer { text-align: center; font-size: 0.9em; color: #555; }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        header, footer {
+            background: #1f2937;
+            color: white;
+            padding: 1em 2em;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #facc15; /* Amarillo Wembli */
+        }
+
+        nav a {
+            margin-right: 1em;
+            text-decoration: none;
+            color: #f5f7fa;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #facc15;
+        }
+
+        main {
+            padding: 2em;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        /* --------------------- Tablas estilo Wembli --------------------- */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2em;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #facc15; /* Amarillo Wembli */
+            color: #1f2937; /* Oscuro para contraste */
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fef3c7; /* Amarillo claro Wembli */
+        }
+
+        tr:hover {
+            background-color: #fde68a; /* Amarillo más intenso al hover */
+        }
+
+        table a {
+            color: #1d4ed8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        table a:hover {
+            text-decoration: underline;
+        }
+
+        /* --------------------- Categorías estilo cards --------------------- */
+        .categorias-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            margin-top: 1em;
+        }
+
+        .categoria-card {
+            background: #fef9c3; /* Amarillo suave */
+            padding: 1em 1.5em;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .categoria-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .categoria-card a {
+            text-decoration: none;
+            color: #b45309; /* Naranja oscuro Wembli */
+            font-weight: bold;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>

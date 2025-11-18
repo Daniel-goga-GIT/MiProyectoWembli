@@ -1,0 +1,16 @@
+{# templates/pedidos/pedido.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedido - Wembli{% endblock %}
+
+{% block contenido %}
+    <h2>Resultado del pedido</h2>
+
+    {% if codigo_error %}
+        <p style="color:red;">Ha ocurrido un error al procesar tu pedido. Código: {{ codigo_error }}</p>
+    {% else %}
+        <p style="color:green;">Pedido realizado con éxito. Código de pedido: {{ codigo_pedido }}</p>
+    {% endif %}
+
+    <a href="{{ path('categorias') }}">Volver a categorías</a>
+{% endblock %}

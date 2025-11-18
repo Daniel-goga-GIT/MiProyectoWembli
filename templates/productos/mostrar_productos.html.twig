@@ -1,33 +1,47 @@
-{# templates/productos/mostrar_productos.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Lista de productos{% endblock %}
+{% block title %}Productos - Wembli{% endblock %}
 
 {% block contenido %}
-    <h2>Lista de productos</h2>
+<h2 style="color:#1E3A8A; margin-bottom:15px;">Lista de productos</h2>
 
-    {% if productos is not empty %}
-        <table border="1" cellpadding="8" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Categoría</th>
+{% if productos is not empty %}
+    <table style="width:100%; border-collapse: collapse; text-align:left;">
+        <thead>
+            <tr style="background-color:#1E40AF; color:white;">
+                <th style="padding:10px;">ID</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Creador</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+                <tr style="border-bottom:1px solid #ccc;">
+                    <td style="padding:8px;">{{ producto.id }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.precio|number_format(2, ',', '.') }} €</td>
+                    <td>{{ producto.categoria.nombre ?? 'Sin categoría' }}</td>
+                    <td>{{ producto.creador.login ?? 'Desconocido' }}</td>
+                    <td>
+                        {% if app.user %}
+                            <a href="{{ path('anadir', {'id': producto.id}) }}" 
+                               style="background-color:#10B981; color:white; padding:5px 10px; border-radius:5px; text-decoration:none;"
+                               onmouseover="this.style.backgroundColor='#059669';" 
+                               onmouseout="this.style.backgroundColor='#10B981';">
+                               Añadir a cesta
+                            </a>
+                        {% else %}
+                            <span style="color: #aaa;">Inicia sesión para añadir</span>
+                        {% endif %}
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.id }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.precio|number_format(2, ',', '.') }} €</td>
-                        <td>{{ producto.categoria.nombre ?? 'Sin categoría' }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No hay productos disponibles.</p>
-    {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No hay productos disponibles 😅</p>
+{% endif %}
 {% endblock %}

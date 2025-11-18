@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cesta de la compra{% endblock %}
+
+{% block contenido %}
+<h2>Tu cesta</h2>
+
+{% if productos is empty %}
+    <p>No hay productos en la cesta 😅</p>
+{% else %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Unidades</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in productos %}
+            <tr>
+                <td>{{ item.producto.nombre }}</td>
+                <td>{{ item.producto.precio|number_format(2, ',', '.') }} €</td>
+                <td>{{ item.unidades }}</td>
+                <td>{{ (item.producto.precio * item.unidades)|number_format(2, ',', '.') }} €</td>
+                <td>
+                    <a href="{{ path('eliminar', {'id': item.producto.id}) }}">Eliminar</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p><strong>Total: {{ total|number_format(2, ',', '.') }} €</strong></p>
+    <a href="{{ path('vaciar_cesta') }}">Vaciar cesta</a>
+{% endif %}
+{% endblock %}
+{# empty Twig template #}

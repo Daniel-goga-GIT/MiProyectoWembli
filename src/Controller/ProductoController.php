@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Producto;
 
+#[IsGranted('ROLE_USER')]
 final class ProductoController extends AbstractController
 {
     #[Route('/productos/{categoria?}', name: 'productos')]

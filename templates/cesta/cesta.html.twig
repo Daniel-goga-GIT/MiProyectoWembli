@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cesta de la compra - Wembli{% endblock %}
+
+{% block contenido %}
+<h2 style="color:#1E3A8A; margin-bottom:15px;">Tu cesta de la compra</h2>
+
+{% if productos is not empty %}
+    <table style="width:100%; border-collapse: collapse; text-align:left;">
+        <thead>
+            <tr style="background-color:#1E40AF; color:white;">
+                <th style="padding:10px;">Producto</th>
+                <th>Precio</th>
+                <th>Unidades</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = 0 %}
+            {% for item in productos %}
+                {% set subtotal = item.producto.precio * item.unidades %}
+                {% set total = total + subtotal %}
+                <tr style="border-bottom:1px solid #ccc;">
+                    <td style="padding:8px;">{{ item.producto.nombre }}</td>
+                    <td>{{ item.producto.precio|number_format(2, ',', '.') }} €</td>
+                    <td>{{ item.unidades }}</td>
+                    <td>{{ subtotal|number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="{{ path('eliminar', {'id': item.producto.id}) }}" 
+                           style="background-color:#EF4444; color:white; padding:5px 10px; border-radius:5px; text-decoration:none;"
+                           onmouseover="this.style.backgroundColor='#DC2626';" 
+                           onmouseout="this.style.backgroundColor='#EF4444';">
+                           Eliminar
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="padding:8px;"><strong>Total</strong></td>
+                <td colspan="2" style="padding:8px;"><strong>{{ total|number_format(2, ',', '.') }} €</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    <a href="{{ path('vaciar_cesta') }}" 
+       style="display:inline-block; margin-top:10px; background-color:#2563EB; color:white; padding:5px 10px; border-radius:5px; text-decoration:none;">
+       Vaciar cesta
+    </a>
+{% else %}
+    <p>Tu cesta está vacía 😅</p>
+{% endif %}
+{% endblock %}

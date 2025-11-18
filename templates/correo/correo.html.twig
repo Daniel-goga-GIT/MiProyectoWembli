@@ -1,0 +1,30 @@
+{# templates/correo/correo.html.twig #}
+<table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio unitario</th>
+            <th>Unidades</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set total = 0 %}
+        {% for item in productos %}
+            {% set subtotal = item.producto.precio * item.unidades %}
+            {% set total = total + subtotal %}
+            <tr>
+                <td>{{ item.producto.nombre }}</td>
+                <td>{{ item.producto.precio|number_format(2, ',', '.') }} €</td>
+                <td>{{ item.unidades }}</td>
+                <td>{{ subtotal|number_format(2, ',', '.') }} €</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td><strong>{{ total|number_format(2, ',', '.') }} €</strong></td>
+        </tr>
+    </tfoot>
+</table>
