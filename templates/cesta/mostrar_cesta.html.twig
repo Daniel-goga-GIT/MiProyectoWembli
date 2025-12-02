@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+{% block title %}Cesta - Wembli{% endblock %}
+{% block contenido %}
+<h2 style="color:#1E3A8A; margin-bottom:15px;">Mi Cesta de Compra</h2>
+
+{% if productos is not empty %}
+    <table style="width:100%; border-collapse: collapse; text-align:left;">
+        <thead>
+            <tr style="background-color:#1E40AF; color:white;">
+                <th style="padding:10px;">Producto</th>
+                <th>Precio</th>
+                <th>Unidades</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = 0 %}
+            {% for key, producto in productos %}
+                <tr style="border-bottom:1px solid #ccc;">
+                    <td style="padding:8px;">{{ producto.nombre }}</td>
+                    <td>{{ producto.precio|number_format(2, ',', '.') }} €</td>
+                    <td>{{ unidades[key] }}</td>
+                    <td>{{ (producto.precio * unidades[key])|number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="{{ path('eliminar', {'id': producto.id}) }}" 
+                           style="color:#EF4444; text-decoration:none;">
+                           Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% set total = total + (producto.precio * unidades[key]) %}
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background-color:#f3f4f6; font-weight:bold;">
+                <td colspan="3" style="padding:10px; text-align:right;">TOTAL:</td>
+                <td colspan="2">{{ total|number_format(2, ',', '.') }} €</td>
+            </tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p>Tu cesta está vacía 🛒</p>
+    <a href="{{ path('categorias') }}" style="color:#1E40AF;">Ver categorías</a>
+{% endif %}
+{% endblock %}

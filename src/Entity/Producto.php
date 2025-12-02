@@ -92,4 +92,9 @@ class Producto
         $this->creador = $creador;
         return $this;
     }
+    
+    public function getCode(): string
+    {
+        return (string) $this->id;
+    }
 }

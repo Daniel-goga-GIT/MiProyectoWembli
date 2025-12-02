@@ -1,10 +1,7 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Productos - Wembli{% endblock %}
-
 {% block contenido %}
 <h2 style="color:#1E3A8A; margin-bottom:15px;">Lista de productos</h2>
-
 {% if productos is not empty %}
     <table style="width:100%; border-collapse: collapse; text-align:left;">
         <thead>
@@ -14,6 +11,7 @@
                 <th>Precio</th>
                 <th>Categoría</th>
                 <th>Creador</th>
+                <th>Cantidad</th>
                 <th>Acción</th>
             </tr>
         </thead>
@@ -27,14 +25,29 @@
                     <td>{{ producto.creador.login ?? 'Desconocido' }}</td>
                     <td>
                         {% if app.user %}
-                            <a href="{{ path('anadir', {'id': producto.id}) }}" 
-                               style="background-color:#10B981; color:white; padding:5px 10px; border-radius:5px; text-decoration:none;"
-                               onmouseover="this.style.backgroundColor='#059669';" 
-                               onmouseout="this.style.backgroundColor='#10B981';">
-                               Añadir a cesta
-                            </a>
+                            <form method="POST" action="{{ path('anadir') }}" style="display:inline-flex; align-items:center; gap:8px;">
+                                <input type="hidden" name="productos_id[]" value="{{ producto.id }}">
+                                <input type="number" 
+                                       name="unidades[]" 
+                                       value="1" 
+                                       min="1" 
+                                       max="999"
+                                       style="width:60px; padding:5px; border:1px solid #ccc; border-radius:4px;">
                         {% else %}
-                            <span style="color: #aaa;">Inicia sesión para añadir</span>
+                            <span style="color: #aaa;">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.user %}
+                                <button type="submit" 
+                                       style="background-color:#10B981; color:white; padding:5px 15px; border-radius:5px; border:none; cursor:pointer; white-space:nowrap;"
+                                       onmouseover="this.style.backgroundColor='#059669';" 
+                                       onmouseout="this.style.backgroundColor='#10B981';">
+                                   Añadir a cesta
+                                </button>
+                            </form>
+                        {% else %}
+                            <span style="color: #aaa;">Inicia sesión</span>
                         {% endif %}
                     </td>
                 </tr>

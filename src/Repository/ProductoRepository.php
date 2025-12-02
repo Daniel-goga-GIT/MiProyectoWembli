@@ -13,5 +13,22 @@ class ProductoRepository extends ServiceEntityRepository
         parent::__construct($registry, Producto::class);
     }
 
-    // Aquí puedes añadir métodos personalizados si quieres
+    /**
+     * Devuelve un array de productos dado un array de IDs
+     *
+     * @param int[] $ids
+     * @return Producto[]
+     */
+    public function findProductsByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }
