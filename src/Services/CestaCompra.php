@@ -15,6 +15,7 @@ class CestaCompra
         $this->requestStack = $requestStack;
     }
 
+    //Recibe como parámetros los productos y las unidades del formulario
     public function cargar_articulos($productos, $unidades){
         for($i = 0; $i < count($productos); $i++){
             if($unidades[$i] != 0){
@@ -23,13 +24,15 @@ class CestaCompra
         }
     }
 
+    //Recibe como parámetro el objecto producto con su unidad y la carga a la cesta
     public function cargar_producto($producto, $unidad){
         $this->cargar_cesta();
         $codigo = $producto->getId();  // ← Usar getId() en vez de getCode()
 
+        //Cojo el código y miro si está en la cesta
         if(array_key_exists($codigo, $this->productos)){
             $this->unidades[$codigo] += $unidad;  // ← Usar mismo código como clave
-        } else {
+        } else if ($unidad != 0) {
             $this->productos[$codigo] = $producto;  // ← Guardar con código como clave
             $this->unidades[$codigo] = $unidad;     // ← Guardar con código como clave
         }
@@ -37,6 +40,7 @@ class CestaCompra
         $this->guardar_cesta();
     }
 
+    //recupera el array de productos y unidades de la sesion
     protected function cargar_cesta() {
         $sesion = $this->requestStack->getSession();
 
