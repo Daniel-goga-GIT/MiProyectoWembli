@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -30,6 +32,17 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $phone = null;
+
+    /**
+     * @var Collection<int, Pedido>
+     */
+    #[ORM\OneToMany(targetEntity: Pedido::class, mappedBy: 'Usuario')]
+    private Collection $pedidos;
+
+    public function __construct()
+    {
+        $this->pedidos = new ArrayCollection();
+    }
 
     // -------------------- Getters y Setters --------------------
 
@@ -115,5 +128,35 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // limpia datos sensibles temporales si es necesario
+    }
+
+    /**
+     * @return Collection<int, Pedido>
+     */
+    public function getPedidos(): Collection
+    {
+        return $this->pedidos;
+    }
+
+    public function addPedido(Pedido $pedido): static
+    {
+        if (!$this->pedidos->contains($pedido)) {
+            $this->pedidos->add($pedido);
+            $pedido->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removePedido(Pedido $pedido): static
+    {
+        if ($this->pedidos->removeElement($pedido)) {
+            // set the owning side to null (unless already changed)
+            if ($pedido->getUsuario() === $this) {
+                $pedido->setUsuario(null);
+            }
+        }
+
+        return $this;
     }
 }

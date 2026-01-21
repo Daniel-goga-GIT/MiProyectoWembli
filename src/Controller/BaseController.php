@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Categoria;
 use App\Entity\Producto;
 use App\Services\CestaCompra;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController
@@ -94,5 +95,39 @@ final class BaseController extends AbstractController
         return $this->redirectToRoute('cesta');
     }
     
-    
+    #[Route('/pedido', name: 'pedido')]
+    public function pedido(CestaCompra $cesta, \Doctrine\ORM\EntityManagerInterface $em)
+    {
+        $error = 0;
+        
+        $productos = $cesta->get_productos();
+        $unidades = $cesta->get_unidades();
+        
+        if(count($productos) == 0){
+            $error = 1;
+        } else {
+            $pedido = new Pedido();
+            $pedido->setCoste($cesta->calcular_coste());
+            $pedido->setFecha(new \DateTime());
+            $pedido->setUsuario($this->getUser());
+
+            $em->persist($pedido);
+
+            foreach ($productos as $codigo_producto => $producto){
+                $pedidoProducto = new PedidoProducto();
+                $pedidoProducto->setPedido($pedido);
+                $pedidoProducto->setProducto($producto);
+                $pedidoProducto->setUnidades($unidades[$codigo_producto]);
+                $em->persist($pedidoProducto);
+            }
+
+            $em->flush();
+
+
+            return $this->render('pedido/pedido.html.twig', [
+                    'productos' => $error,
+                    'pedido_id' => $pedido->getId()
+                ]);
+        }     
+    } 
 }
