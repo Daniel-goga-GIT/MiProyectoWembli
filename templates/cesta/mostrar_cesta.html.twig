@@ -11,7 +11,7 @@
                 <th>Precio</th>
                 <th>Unidades</th>
                 <th>Subtotal</th>
-                <th>Acción</th>
+                <th style="width: 200px;">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +23,28 @@
                     <td>{{ unidades[key] }}</td>
                     <td>{{ (producto.precio * unidades[key])|number_format(2, ',', '.') }} €</td>
                     <td>
-                        <a href="{{ path('eliminar', {'id': producto.id}) }}" 
-                           style="color:#EF4444; text-decoration:none;">
-                           Eliminar
-                        </a>
+                        <form action="{{ path('eliminar', {'id': producto.id}) }}" method="POST" style="display: inline-flex; align-items: center; gap: 5px;">
+                            <input type="number" 
+                                   name="cantidad" 
+                                   min="1" 
+                                   max="{{ unidades[key] }}" 
+                                   value="1" 
+                                   style="width: 50px; padding: 4px; border: 1px solid #ccc; border-radius: 3px;">
+                            <button type="submit" 
+                                    style="padding: 5px 10px; background-color: #EF4444; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Quitar
+                            </button>
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ producto.id) }}">
+                        </form>
+                        <form action="{{ path('eliminar', {'id': producto.id}) }}" method="POST" style="display: inline; margin-left: 5px;">
+                            <input type="hidden" name="cantidad" value="{{ unidades[key] }}">
+                            <button type="submit" 
+                                    style="padding: 5px 10px; background-color: #991B1B; color: white; border: none; border-radius: 4px; cursor: pointer;"
+                                    onclick="return confirm('¿Eliminar todos los {{ producto.nombre }}?');">
+                                🗑️ Todo
+                            </button>
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ producto.id) }}">
+                        </form>
                     </td>
                 </tr>
                 {% set total = total + (producto.precio * unidades[key]) %}
@@ -39,6 +57,17 @@
             </tr>
         </tfoot>
     </table>
+    
+    <div style="margin-top: 20px; text-align: right;">
+        <a href="{{ path('categorias') }}" 
+           style="padding: 10px 20px; background-color: #6B7280; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px; display: inline-block;">
+           Seguir Comprando
+        </a>
+        <a href="{{ path('pedido') }}" 
+           style="padding: 10px 20px; background-color: #10B981; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+           🛒 Realizar Pedido
+        </a>
+    </div>
 {% else %}
     <p>Tu cesta está vacía 🛒</p>
     <a href="{{ path('categorias') }}" style="color:#1E40AF;">Ver categorías</a>

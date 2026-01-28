@@ -71,12 +71,12 @@ class CestaCompra
     
     public function eliminar_producto($codigo_producto, $unidades){
         if (array_key_exists($codigo_producto, $this->productos)){
-            $this->unidades[$codigo_producto] = unidades[$codigo_producto] - $unidades;
+            $this->unidades[$codigo_producto] = $this->unidades[$codigo_producto] - $unidades;
             if ($this->unidades[$codigo_producto] <= 0){
                 unset($this->unidades[$codigo_producto]);
                 unset($this->productos[$codigo_producto]);
             }
-            $this->guardar_cesta;
+            $this->guardar_cesta();
         }
     }
     
@@ -84,8 +84,14 @@ class CestaCompra
     {
         $resultado = 0;
         foreach ($this->productos as $codigo_producto => $producto) {
-            $resultado += $producto->getPrecio() * $this->Unidades[$codigo_producto];
+            $resultado += $producto->getPrecio() * $this->unidades[$codigo_producto];
         }
         return $resultado;
+    }
+    
+    public function is_vacia()
+    {
+        $this->cargar_cesta();
+        return count($this->productos) === 0;
     }
 }

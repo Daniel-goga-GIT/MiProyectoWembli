@@ -9,8 +9,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Categoria;
 use App\Entity\Producto;
+use App\Entity\Pedido;
+use App\Entity\PedidoProducto;
 use App\Services\CestaCompra;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Mime\Address;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface;
 
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController
@@ -73,19 +78,26 @@ final class BaseController extends AbstractController
         ]);
     }
     
-    #[Route('/eliminar/{id}', name: 'eliminar')]
+    #[Route('/eliminar/{id}', name: 'eliminar', methods: ['POST'])]
     public function eliminar_producto(int $id, Request $request): Response
     {
         $sesion = $request->getSession();
+        $cantidad = (int) $request->request->get('cantidad', 1);
 
         // Obtener productos y unidades de la sesión
         $productos = $sesion->get('productos', []);
         $unidades = $sesion->get('unidades', []);
 
-        // Eliminar el producto
+        // Si el producto existe en la cesta
         if (isset($productos[$id])) {
-            unset($productos[$id]);
-            unset($unidades[$id]);
+            // Restar la cantidad especificada
+            $unidades[$id] -= $cantidad;
+            
+            // Si quedan 0 o menos unidades, eliminar el producto completamente
+            if ($unidades[$id] <= 0) {
+                unset($productos[$id]);
+                unset($unidades[$id]);
+            }
 
             // Guardar de vuelta en la sesión
             $sesion->set('productos', $productos);
@@ -97,10 +109,11 @@ final class BaseController extends AbstractController
     
     //Cambiamos el Manager por el Entity ya que no nos dejaría utilizar el persist
     #[Route('/pedido', name: 'pedido')]
-    public function pedido(CestaCompra $cesta, EntityManagerInterface $em)
+    public function pedido(CestaCompra $cesta, EntityManagerInterface $em, MailerInterface $mailer)
     {   
-        //Iniciamos las variables
+        // Iniciamos las variables
         $error = 0;
+        $pedido = null;
         $productos = $cesta->get_productos();
         $unidades  = $cesta->get_unidades();
         
@@ -118,32 +131,73 @@ final class BaseController extends AbstractController
             $em->persist($pedido);
             
 
-            //Hacemos un for para asignar los productos
+            // Hacemos un for para asignar los productos
             foreach ($productos as $codigo_producto => $productoCesta) {
-                $pedidoProdudcto = new PedidoProducto();
-                $pedidoProdudcto->setPedido($pedido);
+                $pedidoProducto = new PedidoProducto();
+                $pedidoProducto->setPedido($pedido);
                 
                 $producto = $em->getRepository(Producto::class)->findBy(['id' => $productoCesta -> getId()])[0];
                         
-                $pedidoProdudcto->setProducto($producto);
-                //Asignamos el codigo producto a las unidades
-                $pedidoProdudcto->setUnidades($unidades[$codigo_producto]);
-                //Generamos el persist
-                $em->persist($pedidoProdudcto);
+                $pedidoProducto->setProducto($producto);
+                // Asignamos el codigo producto a las unidades
+                $pedidoProducto->setUnidades($unidades[$codigo_producto]);
+                // Generamos el persist
+                $em->persist($pedidoProducto);
             }
             try{
-                //El flush hace que se guarde en la base
-                //Y genera una sesión.
+                // El flush hace que se guarde en la base de datos
                 $em->flush();
-            } catch (Exception $ex) {
-                //Este error será porque falla el acceso a la BD
+            } catch (\Exception $ex) {
+                // Este error será porque falla el acceso a la BD
                 $error = 2;
+            }
+            
+            if (!$error) {
+                $email = (new TemplatedEmail())
+                    ->from('noreply@example.com')
+                    ->to(new Address($this->getUser()->getEmail()))
+                    ->subject('Confirmación de pedido #' . $pedido->getId())
+                    ->htmlTemplate('correo/correo.html.twig')
+                    ->locale('es')
+                    ->context([
+                        'pedido_id' => $pedido->getId(),
+                        'productos' => $productos,
+                        'unidades' => $unidades,
+                        'coste' => $cesta->calcular_coste(),
+                    ]);
+                
+                try {
+                    $mailer->send($email);
+                } catch (\Exception $e) {
+                    // Si falla el envío de email, solo lo registramos pero no bloqueamos el pedido
+                    // En producción, podrías usar un logger: $this->logger->error('Error enviando email: ' . $e->getMessage());
+                }
+                
+                // Vaciar la cesta después de un pedido exitoso
+                $request = $this->container->get('request_stack')->getCurrentRequest();
+                $sesion = $request->getSession();
+                $sesion->remove('productos');
+                $sesion->remove('unidades');
             }
         }
         
-        return $this->render('pedido/pedido.html.twig', [
-            'pedido_id' => $pedido->getId(),
+        return $this->render('pedidos/pedido.html.twig', [
+            'pedido_id' => $pedido ? $pedido->getId() : null,
             'error' => $error
         ]);
-    } 
+    }
+    
+    #[Route('/pedidos', name: 'pedidos')]
+    public function mostrar_pedidos(ManagerRegistry $doctrine): Response
+    {
+        // Obtener los pedidos del usuario autenticado
+        $pedidos = $doctrine->getRepository(Pedido::class)->findBy(
+            ['Usuario' => $this->getUser()],
+            ['fecha' => 'DESC']
+        );
+        
+        return $this->render('pedidos/pedidos.html.twig', [
+            'pedidos' => $pedidos,
+        ]);
+    }
 }

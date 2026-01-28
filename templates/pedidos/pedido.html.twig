@@ -1,16 +1,64 @@
 {# templates/pedidos/pedido.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Pedido - Wembli{% endblock %}
+{% block title %}Confirmación de Pedido - Wembli{% endblock %}
 
 {% block contenido %}
-    <h2>Resultado del pedido</h2>
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        {% if error == 0 %}
+            <div style="background-color: #D1FAE5; border: 2px solid #10B981; padding: 20px; border-radius: 8px; text-align: center;">
+                <h2 style="color: #065F46; margin-top: 0;">✅ ¡Pedido Realizado con Éxito!</h2>
+                <p style="font-size: 18px; color: #047857;">
+                    Tu pedido ha sido procesado correctamente.
+                </p>
+                <p style="font-size: 24px; font-weight: bold; color: #065F46; margin: 20px 0;">
+                    Número de Pedido: #{{ pedido_id }}
+                </p>
+                <p style="color: #047857;">
+                    📧 Hemos enviado un correo de confirmación a <strong>{{ app.user.email }}</strong>
+                </p>
+                <p style="color: #047857; margin-top: 20px;">
+                    Gracias por tu compra, <strong>{{ app.user.login }}</strong>! 🎉
+                </p>
+            </div>
+        {% elseif error == 1 %}
+            <div style="background-color: #FEF3C7; border: 2px solid #F59E0B; padding: 20px; border-radius: 8px; text-align: center;">
+                <h2 style="color: #92400E; margin-top: 0;">⚠️ Cesta Vacía</h2>
+                <p style="color: #78350F;">
+                    No hay productos en tu cesta para realizar un pedido.
+                </p>
+                <a href="{{ path('categorias') }}" 
+                   style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #F59E0B; color: white; text-decoration: none; border-radius: 5px;">
+                   Ver Categorías
+                </a>
+            </div>
+        {% elseif error == 2 %}
+            <div style="background-color: #FEE2E2; border: 2px solid #EF4444; padding: 20px; border-radius: 8px; text-align: center;">
+                <h2 style="color: #991B1B; margin-top: 0;">❌ Error al Procesar el Pedido</h2>
+                <p style="color: #7F1D1D;">
+                    Ha ocurrido un error al guardar tu pedido en la base de datos.
+                </p>
+                <p style="color: #7F1D1D;">
+                    Por favor, inténtalo de nuevo más tarde o contacta con soporte.
+                </p>
+                <a href="{{ path('cesta') }}" 
+                   style="display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #EF4444; color: white; text-decoration: none; border-radius: 5px;">
+                   Volver a la Cesta
+                </a>
+            </div>
+        {% endif %}
 
-    {% if codigo_error %}
-        <p style="color:red;">Ha ocurrido un error al procesar tu pedido. Código: {{ codigo_error }}</p>
-    {% else %}
-        <p style="color:green;">Pedido realizado con éxito. Código de pedido: {{ codigo_pedido }}</p>
-    {% endif %}
-
-    <a href="{{ path('categorias') }}">Volver a categorías</a>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ path('categorias') }}" 
+               style="padding: 10px 20px; background-color: #1E40AF; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px; display: inline-block;">
+               🏠 Volver a Categorías
+            </a>
+            {% if error == 0 %}
+                <a href="{{ path('app_home') }}" 
+                   style="padding: 10px 20px; background-color: #6B7280; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+                   Ir al Inicio
+                </a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

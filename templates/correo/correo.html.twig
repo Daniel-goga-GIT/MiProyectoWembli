@@ -1,30 +1,37 @@
 {# templates/correo/correo.html.twig #}
+<h1>¡Gracias por su compra {{ app.user.login }}!</h1>
+<h2>Identificador de su pedido: #{{ pedido_id }}</h2>
+
+<h2>Resumen de su compra:</h2>
+
 <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
     <thead>
         <tr>
-            <th>Producto</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
             <th>Precio unitario</th>
             <th>Unidades</th>
             <th>Subtotal</th>
         </tr>
     </thead>
     <tbody>
-        {% set total = 0 %}
-        {% for item in productos %}
-            {% set subtotal = item.producto.precio * item.unidades %}
-            {% set total = total + subtotal %}
+        {% for codigo, producto in productos %}
+            {% set subtotal = producto.precio * unidades[codigo] %}
             <tr>
-                <td>{{ item.producto.nombre }}</td>
-                <td>{{ item.producto.precio|number_format(2, ',', '.') }} €</td>
-                <td>{{ item.unidades }}</td>
+                <td>{{ codigo }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precio|number_format(2, ',', '.') }} €</td>
+                <td>{{ unidades[codigo] }}</td>
                 <td>{{ subtotal|number_format(2, ',', '.') }} €</td>
             </tr>
         {% endfor %}
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3"><strong>Total</strong></td>
-            <td><strong>{{ total|number_format(2, ',', '.') }} €</strong></td>
+            <td colspan="5"><strong>Precio total</strong></td>
+            <td><strong>{{ coste|number_format(2, ',', '.') }} €</strong></td>
         </tr>
     </tfoot>
 </table>
