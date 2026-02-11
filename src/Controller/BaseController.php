@@ -187,17 +187,28 @@ final class BaseController extends AbstractController
         ]);
     }
     
-    #[Route('/pedidos', name: 'pedidos')]
+    #[Route('/historial', name: 'pedidos')]
     public function mostrar_pedidos(ManagerRegistry $doctrine): Response
     {
-        // Obtener los pedidos del usuario autenticado
+        // Obtener todos los pedidos realizados
         $pedidos = $doctrine->getRepository(Pedido::class)->findBy(
-            ['Usuario' => $this->getUser()],
+            [],
             ['fecha' => 'DESC']
         );
+
+        $pedidoProductoRepo = $doctrine->getRepository(PedidoProducto::class);
+        $pedidosConProductos = [];
+
+        foreach ($pedidos as $pedido) {
+            $pedidoProductos = $pedidoProductoRepo->findBy(['pedido' => $pedido]);
+            $pedidosConProductos[] = [
+                'pedido' => $pedido,
+                'pedidoProductos' => $pedidoProductos,
+            ];
+        }
         
         return $this->render('pedidos/pedidos.html.twig', [
-            'pedidos' => $pedidos,
+            'pedidos' => $pedidosConProductos,
         ]);
     }
 }

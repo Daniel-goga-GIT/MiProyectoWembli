@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PedidoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,17 @@ class Pedido
 
     #[ORM\Column(length: 4, nullable: true)]
     private ?string $code = null;
+
+    /**
+     * @var Collection<int, PedidoProducto>
+     */
+    #[ORM\OneToMany(targetEntity: PedidoProducto::class, mappedBy: 'pedido')]
+    private Collection $pedidoProductos;
+
+    public function __construct()
+    {
+        $this->pedidoProductos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -67,6 +80,35 @@ class Pedido
         return $this;
     }
 
+
+    /**
+     * @return Collection<int, PedidoProducto>
+     */
+    public function getPedidoProductos(): Collection
+    {
+        return $this->pedidoProductos;
+    }
+
+    public function addPedidoProducto(PedidoProducto $pedidoProducto): static
+    {
+        if (!$this->pedidoProductos->contains($pedidoProducto)) {
+            $this->pedidoProductos->add($pedidoProducto);
+            $pedidoProducto->setPedido($this);
+        }
+
+        return $this;
+    }
+
+    public function removePedidoProducto(PedidoProducto $pedidoProducto): static
+    {
+        if ($this->pedidoProductos->removeElement($pedidoProducto)) {
+            if ($pedidoProducto->getPedido() === $this) {
+                $pedidoProducto->setPedido(null);
+            }
+        }
+
+        return $this;
+    }
     public function getCode(): ?string
     {
         return $this->code;

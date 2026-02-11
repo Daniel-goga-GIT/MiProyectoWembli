@@ -8,7 +8,8 @@
         <h2 style="color:#1E3A8A; margin-bottom:20px;">📦 Mis Pedidos</h2>
 
         {% if pedidos is not empty %}
-            {% for pedido in pedidos %}
+            {% for item in pedidos %}
+                {% set pedido = item.pedido %}
                 <div style="background-color: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
                     <h3 style="color: #1E40AF; margin: 0 0 10px 0;">
                         Pedido #{{ pedido.id }} 
@@ -27,12 +28,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for item in pedido.pedidoProductos %}
+                            {% for pedidoProducto in item.pedidoProductos %}
                                 <tr style="border-bottom:1px solid #E5E7EB;">
-                                    <td style="padding:8px;">{{ item.producto.nombre }}</td>
-                                    <td>{{ item.producto.precio|number_format(2, ',', '.') }} €</td>
-                                    <td style="text-align: center;">{{ item.unidades }}</td>
-                                    <td style="text-align: right;">{{ (item.producto.precio * item.unidades)|number_format(2, ',', '.') }} €</td>
+                                    <td style="padding:8px;">{{ pedidoProducto.producto.nombre }}</td>
+                                    <td>{{ pedidoProducto.producto.precio|number_format(2, ',', '.') }} €</td>
+                                    <td style="text-align: center;">{{ pedidoProducto.unidades }}</td>
+                                    <td style="text-align: right;">{{ (pedidoProducto.producto.precio * pedidoProducto.unidades)|number_format(2, ',', '.') }} €</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
